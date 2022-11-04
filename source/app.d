@@ -4,6 +4,13 @@ import readlineFunctions;
 import lexer;
 import interpreter;
 
+const string usage = `
+Usage: ysh [-dt/--dump-tokens]
+
+-dt/--dump-tokens:
+    Prints out all tokens after a command is typed in
+`;
+
 void main(string[] args) {
 	bool run        = true;
 	bool dumpTokens = false;
@@ -11,6 +18,12 @@ void main(string[] args) {
 	for (size_t i = 1; i < args.length; ++i) {
 		if (args[i][0] == '-') {
 			switch (args[i]) {
+				case "-h":
+				case "--help": {
+					writeln(usage);
+					run = false;
+					break;
+				}
 				case "-dt":
 				case "--dump-tokens": {
 					dumpTokens = true;
