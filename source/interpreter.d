@@ -1,6 +1,7 @@
 import std.stdio;
 import std.process;
 import lexer;
+import commandManager;
 
 void Interpret(Lexer_Token[] tokens) {
 	for (size_t i = 0; i < tokens.length; ++i) {
@@ -9,7 +10,9 @@ void Interpret(Lexer_Token[] tokens) {
 		switch (token.type) {
 			case Lexer_TokenType.End: break;
 			case Lexer_TokenType.Command: {
-				string[] args = [token.contents];
+				string[] args       = [token.contents];
+				CommandManager cmds = CommandManagerInstance();
+				
 				++ i;
 				while (tokens[i].type != Lexer_TokenType.End) {
 					if (tokens[i].type != Lexer_TokenType.Parameter) {
@@ -24,21 +27,27 @@ void Interpret(Lexer_Token[] tokens) {
 					++ i;
 				}
 
-				Pid child;
-				try {
-					child = spawnProcess(args);
+				Command* cmd = cmds.GetCommand(args[0]);
+				if (cmd) {
+					cmd.func(args);
 				}
-				catch (ProcessException e) {
-					writefln("ProcessException: %s", e.msg);
-					return;
-				}
+				else {
+					Pid child;
+					try {
+						child = spawnProcess(args);
+					}
+					catch (ProcessException e) {
+						writefln("ProcessException: %s", e.msg);
+						return;
+					}
 
-				try {
-					wait(child);
-				}
-				catch (ProcessException e) {
-					writefln("ProcessException: %s", e.msg);
-					return;
+					try {
+						wait(child);
+					}
+					catch (ProcessException e) {
+						writefln("ProcessException: %s", e.msg);
+						return;
+					}
 				}
 				break;
 			}
