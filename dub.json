@@ -1,0 +1,10 @@
+{
+	"authors": [
+		"yeti0904"
+	],
+	"copyright": "Copyright © 2022, yeti0904",
+	"description": "A small shell",
+	"license": "GPL-3.0-or-later",
+	"name": "lysh",
+	"libs": ["readline"]
+}

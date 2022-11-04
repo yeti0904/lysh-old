@@ -1,0 +1,15 @@
+.dub
+docs.json
+__dummy.html
+docs/
+/lysh
+lysh.so
+lysh.dylib
+lysh.dll
+lysh.a
+lysh.lib
+lysh-test-*
+*.exe
+*.o
+*.obj
+*.lst
