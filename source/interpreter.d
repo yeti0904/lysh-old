@@ -45,7 +45,13 @@ void Interpret(Lexer_Token[] tokens) {
 
 				Command* cmd = cmds.GetCommand(args[0]);
 				if (cmd) {
-					cmds.RunCommand(cmd, args);
+					try {
+						cmds.RunCommand(cmd, args);
+					}
+					catch (CommandException e) {
+						writefln("CommandException: %s", e.msg);
+						return;
+					}
 				}
 				else {
 					Pid child;
