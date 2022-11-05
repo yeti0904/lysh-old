@@ -77,3 +77,8 @@ void Interpret(Lexer_Token[] tokens) {
 		}
 	}
 }
+
+void InterpretText(string text) {
+	auto tokens = Lexer_Lex(text);
+	Interpret(tokens);
+}

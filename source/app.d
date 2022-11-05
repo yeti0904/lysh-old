@@ -1,3 +1,4 @@
+static import std.file;
 import std.stdio;
 import std.string;
 import std.process;
@@ -6,6 +7,7 @@ import lexer;
 import interpreter;
 import commandManager;
 import commands;
+import util;
 
 const string usage = `
 Usage: ysh [-dt/--dump-tokens]
@@ -52,6 +54,14 @@ void main(string[] args) {
 	}
 
 	CommandManager cmds = CommandManagerInstance();
+
+	// run rc file
+	string rcFilePath = Util_GetConfigPath() ~ "/yshrc";
+	bool   runConfig  = true;
+	if (!std.file.exists(rcFilePath)) {
+		std.file.write(rcFilePath, []);
+	}
+	InterpretText(std.file.readText(rcFilePath));
 
 	while (run) {
 		string prompt = environment.get("YSH_PROMPT");
