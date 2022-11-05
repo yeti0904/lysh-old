@@ -24,7 +24,19 @@ Lexer_Token[] Lexer_Lex(string input) {
 		auto ch = input[i];
 	
 		switch (ch) {
-			case '$':
+			case '\\': {
+				if ((i == 0) || (input[i - 1] == '\\')) {
+					reading ~= input[i];
+				}
+				break;
+			}
+			case '$': {
+				if ((i == 0) || (input[i - 1] == '\\')) {
+					reading ~= input[i];
+					break;
+				}
+				goto case;
+			}
 			case '\0':
 			case '\n':
 			case ' ': {
