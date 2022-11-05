@@ -17,6 +17,7 @@ struct Lexer_Token {
 Lexer_Token[] Lexer_Lex(string input) {
 	Lexer_Token[] ret;
 	string        reading;
+	bool          inString = false;
 
 	input ~= '\0';
 
@@ -25,22 +26,34 @@ Lexer_Token[] Lexer_Lex(string input) {
 	
 		switch (ch) {
 			case '\\': {
-				if ((i == 0) || (input[i - 1] == '\\')) {
+				if ((i != 0) && (input[i - 1] == '\\')) {
 					reading ~= input[i];
 				}
 				break;
 			}
 			case '$': {
-				if ((i == 0) || (input[i - 1] == '\\')) {
+				if ((i != 0) && (input[i - 1] == '\\')) {
 					reading ~= input[i];
 					break;
 				}
 				goto case;
 			}
+			case '"': {
+				if ((i != 0) && (input[i] - 1) == '\\') {
+					reading ~= input[i];
+					break;
+				}
+				inString = !inString;
+				break;
+			}
 			case ';':
 			case '\0':
 			case '\n':
 			case ' ': {
+				if (inString && (ch == ' ')) {
+					reading ~= input[i];
+					break;
+				}
 				if (
 					(
 						(ret.length == 0) ||
