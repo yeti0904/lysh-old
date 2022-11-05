@@ -9,3 +9,6 @@ dub build
 
 ### dependencies
 readline
+
+## syntax
+variables: `$(variable_name)`
