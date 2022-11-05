@@ -37,6 +37,7 @@ Lexer_Token[] Lexer_Lex(string input) {
 				}
 				goto case;
 			}
+			case ';':
 			case '\0':
 			case '\n':
 			case ' ': {
@@ -60,7 +61,7 @@ Lexer_Token[] Lexer_Lex(string input) {
 					);
 					reading = "";
 				}
-				if ((ch == '\n') || (ch == '\0')) {
+				if ((ch == '\n') || (ch == '\0') || (ch == ';')) {
 					ret ~= Lexer_Token(
 						Lexer_TokenType.End,
 						""
