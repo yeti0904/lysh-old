@@ -66,7 +66,7 @@ void main(string[] args) {
 	using_history(); // set up readline history
 
 	while (run) {
-		string prompt = environment.get("YSH_PROMPT");
+		string prompt = environment.get("LYSH_PROMPT");
 		if (prompt is null) {
 			prompt = defaultPrompt;
 		}
