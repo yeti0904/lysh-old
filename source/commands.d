@@ -1,5 +1,6 @@
 import std.stdio;
 import std.conv;
+import std.process;
 import core.stdc.stdlib;
 import commandManager;
 
@@ -37,4 +38,12 @@ void Commands_Exit(string[] args) {
 			return;
 		}
 	}
+}
+
+void Commands_Set(string[] args) {
+	environment[args[1]] = args[2];
+}
+
+void Commands_Unset(string[] args) {
+	environment[args[1]] = null;
 }

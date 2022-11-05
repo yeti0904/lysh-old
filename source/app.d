@@ -52,22 +52,6 @@ void main(string[] args) {
 	}
 
 	CommandManager cmds = CommandManagerInstance();
-	cmds.RegisterCommand(
-		"help", &Commands_Help,
-		[
-			"help <command>",
-			"when command is not given, show the names of all registered commands",
-			"when command is given, show information for that command"
-		]
-	);
-	cmds.RegisterCommand(
-		"exit", &Commands_Exit,
-		[
-			"exit <status>",
-			"when status is not given, exit with status 0",
-			"when status is given, exit with that status"
-		]
-	);
 
 	while (run) {
 		string prompt = environment.get("YSH_PROMPT");
