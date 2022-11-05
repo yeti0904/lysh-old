@@ -6,6 +6,7 @@ enum Lexer_TokenType {
 	Command,
 	Parameter,
 	EnvVariable,
+	Redirect,
 	End
 }
 
@@ -39,6 +40,14 @@ Lexer_Token[] Lexer_Lex(string input) {
 				inString = !inString;
 				break;
 			}
+			case '>': {
+				ret ~= Lexer_Token(
+					Lexer_TokenType.Redirect,
+					reading
+				);
+				reading = "";
+				break;
+			}
 			case '$': {
 				if ((i != 0) && (input[i - 1] == '\\')) {
 					reading ~= input[i];
@@ -55,6 +64,17 @@ Lexer_Token[] Lexer_Lex(string input) {
 					break;
 				}
 				if (
+					(ret.length != 0) &&
+					(ret[ret.length - 1].type == Lexer_TokenType.Redirect) &&
+					(reading != "")
+				) {
+					ret ~= Lexer_Token(
+						Lexer_TokenType.Parameter,
+						reading
+					);
+					reading = "";
+				}
+				else if (
 					(
 						(ret.length == 0) ||
 						(ret[ret.length - 1].type == Lexer_TokenType.End)
@@ -127,6 +147,9 @@ string Lexer_TokenTypeToString(Lexer_TokenType type) {
 		}
 		case Lexer_TokenType.EnvVariable: {
 			return "envVariable";
+		}
+		case Lexer_TokenType.Redirect: {
+			return "redirect";
 		}
 		case Lexer_TokenType.End: {
 			return "end";

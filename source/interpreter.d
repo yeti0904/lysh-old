@@ -1,5 +1,6 @@
 import std.stdio;
 import std.process;
+import std.exception;
 import lexer;
 import commandManager;
 
@@ -15,7 +16,10 @@ void Interpret(Lexer_Token[] tokens) {
 				
 				++ i;
 				string arg;
-				while (tokens[i].type != Lexer_TokenType.End) {
+				while (
+					(tokens[i].type != Lexer_TokenType.End) &&
+					(tokens[i].type != Lexer_TokenType.Redirect)
+				) {
 					switch (tokens[i].type) {
 						case Lexer_TokenType.Parameter: {
 							arg  ~= tokens[i].contents;
@@ -39,6 +43,24 @@ void Interpret(Lexer_Token[] tokens) {
 					++ i;
 				}
 
+				bool redirect = false;
+				File redirectTo;
+				if (tokens[i].type == Lexer_TokenType.Redirect) {
+					redirect = true;
+					++ i;
+					if (!(i < tokens.length)) {
+						writeln("Redirect expects file path parameter");
+						return;
+					}
+					try {
+						redirectTo = File(tokens[i].contents, "w");
+					}
+					catch (ErrnoException e) {
+						writefln("ErrnoException: %s", e.msg);
+						return;
+					}
+				}
+
 				if (arg != "") {
 					args ~= [arg];
 				}
@@ -56,7 +78,14 @@ void Interpret(Lexer_Token[] tokens) {
 				else {
 					Pid child;
 					try {
-						child = spawnProcess(args);
+						if (redirect) {
+							child = spawnProcess(
+								args, stdin, redirectTo, redirectTo
+							);
+						}
+						else {
+							child = spawnProcess(args);
+						}
 					}
 					catch (ProcessException e) {
 						writefln("ProcessException: %s", e.msg);
