@@ -14,17 +14,33 @@ void Interpret(Lexer_Token[] tokens) {
 				CommandManager cmds = CommandManagerInstance();
 				
 				++ i;
+				string arg;
 				while (tokens[i].type != Lexer_TokenType.End) {
-					if (tokens[i].type != Lexer_TokenType.Parameter) {
-						writefln(
-							"Unexpected token %s: %s",
-							Lexer_TokenTypeToString(tokens[i].type),
-							tokens[i].contents
-						);
-						return;
+					switch (tokens[i].type) {
+						case Lexer_TokenType.Parameter: {
+							arg  ~= tokens[i].contents;
+							args ~= [arg];
+							arg   = "";
+							break;
+						}
+						case Lexer_TokenType.EnvVariable: {
+							arg ~= environment.get(tokens[i].contents, "");
+							break;
+						}
+						default: {
+							writefln(
+								"Unexpected token %s: %s",
+								Lexer_TokenTypeToString(tokens[i].type),
+								tokens[i].contents
+							);
+							return;
+						}
 					}
-					args ~= [tokens[i].contents];
 					++ i;
+				}
+
+				if (arg != "") {
+					args ~= [arg];
 				}
 
 				Command* cmd = cmds.GetCommand(args[0]);

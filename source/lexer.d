@@ -5,6 +5,7 @@ import std.string;
 enum Lexer_TokenType {
 	Command,
 	Parameter,
+	EnvVariable,
 	End
 }
 
@@ -19,8 +20,11 @@ Lexer_Token[] Lexer_Lex(string input) {
 
 	input ~= '\0';
 
-	foreach (char ch ; input) {
+	for (size_t i = 0; i < input.length; ++i) {
+		auto ch = input[i];
+	
 		switch (ch) {
+			case '$':
 			case '\0':
 			case '\n':
 			case ' ': {
@@ -50,6 +54,31 @@ Lexer_Token[] Lexer_Lex(string input) {
 						""
 					);
 				}
+
+				if (ch == '$') {
+					if ((i == 0) || (input[i - 1] == '\\')) {
+						reading ~= ch;
+						break;
+					}
+
+					++ i;
+					if (input[i] != '(') {
+						writefln("Expected (");
+						return [];
+					}
+
+					++ i;
+					while ((input[i] != ')') && (input[i] != '\0')) {
+						reading ~= input[i];
+						++ i;
+					}
+
+					ret ~= Lexer_Token(
+						Lexer_TokenType.EnvVariable,
+						reading
+					);
+					reading = "";
+				}
 				break;
 			}
 			default: {
@@ -69,6 +98,9 @@ string Lexer_TokenTypeToString(Lexer_TokenType type) {
 		}
 		case Lexer_TokenType.Parameter: {
 			return "parameter";
+		}
+		case Lexer_TokenType.EnvVariable: {
+			return "envVariable";
 		}
 		case Lexer_TokenType.End: {
 			return "end";

@@ -1,5 +1,6 @@
 import std.stdio;
 import std.string;
+import std.process;
 import readlineFunctions;
 import lexer;
 import interpreter;
@@ -14,8 +15,9 @@ Usage: ysh [-dt/--dump-tokens]
 `;
 
 void main(string[] args) {
-	bool run        = true;
-	bool dumpTokens = false;
+	bool   run           = true;
+	bool   dumpTokens    = false;
+	string defaultPrompt = environment.get("USER", "") == "root"? "# " : "$ ";
 	
 	for (size_t i = 1; i < args.length; ++i) {
 		if (args[i][0] == '-') {
@@ -58,7 +60,12 @@ void main(string[] args) {
 	);
 
 	while (run) {
-		string input  = Readline("$ ");
+		string prompt = environment.get("YSH_PROMPT");
+		if (prompt is null) {
+			prompt = defaultPrompt;
+		}
+	
+		string input  = Readline(prompt);
 		auto   tokens = Lexer_Lex(input);
 		if (dumpTokens) {
 			Lexer_DumpTokens(tokens);
