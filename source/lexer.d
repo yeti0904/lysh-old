@@ -31,13 +31,6 @@ Lexer_Token[] Lexer_Lex(string input) {
 				}
 				break;
 			}
-			case '$': {
-				if ((i != 0) && (input[i - 1] == '\\')) {
-					reading ~= input[i];
-					break;
-				}
-				goto case;
-			}
 			case '"': {
 				if ((i != 0) && (input[i] - 1) == '\\') {
 					reading ~= input[i];
@@ -45,6 +38,13 @@ Lexer_Token[] Lexer_Lex(string input) {
 				}
 				inString = !inString;
 				break;
+			}
+			case '$': {
+				if ((i != 0) && (input[i - 1] == '\\')) {
+					reading ~= input[i];
+					break;
+				}
+				goto case;
 			}
 			case ';':
 			case '\0':
@@ -82,7 +82,7 @@ Lexer_Token[] Lexer_Lex(string input) {
 				}
 
 				if (ch == '$') {
-					if ((i == 0) || (input[i - 1] == '\\')) {
+					if ((i != 0) && (input[i - 1] == '\\')) {
 						reading ~= ch;
 						break;
 					}
