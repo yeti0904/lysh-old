@@ -63,6 +63,8 @@ void main(string[] args) {
 	}
 	InterpretText(std.file.readText(rcFilePath));
 
+	using_history(); // set up readline history
+
 	while (run) {
 		string prompt = environment.get("YSH_PROMPT");
 		if (prompt is null) {
@@ -70,6 +72,7 @@ void main(string[] args) {
 		}
 	
 		string input  = Readline(prompt);
+		Readline_AddHistory(input);
 		auto   tokens = Lexer_Lex(input);
 		if (dumpTokens) {
 			Lexer_DumpTokens(tokens);
