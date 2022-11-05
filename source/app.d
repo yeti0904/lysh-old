@@ -1,4 +1,4 @@
-static import std.file;
+import std.file;
 import std.stdio;
 import std.string;
 import std.process;
@@ -58,10 +58,10 @@ void main(string[] args) {
 	// run rc file
 	string rcFilePath = Util_GetConfigPath() ~ "/yshrc";
 	bool   runConfig  = true;
-	if (!std.file.exists(rcFilePath)) {
+	if (!exists(rcFilePath)) {
 		std.file.write(rcFilePath, []);
 	}
-	InterpretText(std.file.readText(rcFilePath));
+	InterpretText(readText(rcFilePath));
 
 	using_history(); // set up readline history
 
