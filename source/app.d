@@ -8,6 +8,7 @@ import interpreter;
 import commandManager;
 import commands;
 import util;
+import prompt;
 
 const string usage = `
 Usage: ysh [-dt/--dump-tokens]
@@ -56,7 +57,7 @@ void main(string[] args) {
 	CommandManager cmds = CommandManagerInstance();
 
 	// run rc file
-	string rcFilePath = Util_GetConfigPath() ~ "/yshrc";
+	string rcFilePath = Util_GetConfigPath() ~ "/lyshrc";
 	bool   runConfig  = true;
 	if (!exists(rcFilePath)) {
 		std.file.write(rcFilePath, []);
@@ -71,7 +72,7 @@ void main(string[] args) {
 			prompt = defaultPrompt;
 		}
 	
-		string input  = Readline(prompt);
+		string input  = Readline(CreatePrompt(prompt));
 		Readline_AddHistory(input);
 		auto   tokens = Lexer_Lex(input);
 		if (dumpTokens) {

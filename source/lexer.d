@@ -27,8 +27,28 @@ Lexer_Token[] Lexer_Lex(string input) {
 	
 		switch (ch) {
 			case '\\': {
-				if ((i != 0) && (input[i - 1] == '\\')) {
-					reading ~= input[i];
+				++ i;
+				switch (input[i]) {
+					case '\\': {
+						reading ~= '\\';
+						break;
+					}
+					case 'e': {
+						reading ~= '\x1b';
+						break;
+					}
+					case 'n': {
+						reading ~= '\n';
+						break;
+					}
+					case '$': {
+						reading ~= '$';
+						break;
+					}
+					default: {
+						writefln("Unknown escape sequence: %c", input[i]);
+						return [];
+					}
 				}
 				break;
 			}
@@ -109,7 +129,7 @@ Lexer_Token[] Lexer_Lex(string input) {
 
 					++ i;
 					if (input[i] != '(') {
-						writefln("Expected (");
+						writefln("Expected ( after $");
 						return [];
 					}
 
