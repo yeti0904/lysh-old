@@ -1,5 +1,7 @@
 import std.stdio;
+import std.file;
 import std.conv;
+import std.array;
 import std.process;
 import core.stdc.stdlib;
 import commandManager;
@@ -46,4 +48,13 @@ void Commands_Set(string[] args) {
 
 void Commands_Unset(string[] args) {
 	environment[args[1]] = null;
+}
+
+void Commands_Cd(string[] args) {
+	try {
+		chdir(args[1].replace("~", environment.get("HOME")));
+	}
+	catch (FileException e) {
+		writefln("Failed to change directory: %s", e.msg);
+	}
 }

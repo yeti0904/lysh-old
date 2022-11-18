@@ -49,6 +49,13 @@ class CommandManager {
 				"deletes variable from the environment"
 			]
 		);
+		RegisterCommand(
+			"cd", &Commands_Cd, 1,
+			[
+				"cd [path]",
+				"changes current working directory to [path]"
+			]
+		);
 	}
 	void RegisterCommand(string name, CommandFunction func, uint min, string[] help) {
 		commands ~= Command(name, help, func, min);
