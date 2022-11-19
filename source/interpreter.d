@@ -1,20 +1,33 @@
 import std.stdio;
 import std.process;
+import std.algorithm;
 import std.exception;
 import lexer;
 import commandManager;
+import aliasManager;
 
 void Interpret(Lexer_Token[] tokens) {
+	AliasManager aliases = AliasManager.Instance();
+
 	for (size_t i = 0; i < tokens.length; ++i) {
 		auto token = tokens[i];
 		
 		switch (token.type) {
 			case Lexer_TokenType.End: break;
 			case Lexer_TokenType.Command: {
-				string[] args       = [token.contents];
 				CommandManager cmds = CommandManagerInstance();
+
+				if (aliases.AliasExists(tokens[i].contents)) {
+					tokens = tokens.remove(i);
+					tokens =
+						tokens[0 .. i] ~
+						Lexer_Lex(aliases.aliases[token.contents]) ~
+						tokens[i .. $];
+					token = tokens[i];
+				}
 				
 				++ i;
+				string[] args = [token.contents];
 				string arg;
 				while (
 					(tokens[i].type != Lexer_TokenType.End) &&

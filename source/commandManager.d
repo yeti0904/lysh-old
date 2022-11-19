@@ -56,6 +56,13 @@ class CommandManager {
 				"changes current working directory to [path]"
 			]
 		);
+		RegisterCommand(
+			"alias", &Commands_Alias, 2,
+			[
+				"alias [name] [command]",
+				"sets an alias, so when you use a [name] command, it executes [command]"
+			]
+		);
 	}
 	void RegisterCommand(string name, CommandFunction func, uint min, string[] help) {
 		commands ~= Command(name, help, func, min);

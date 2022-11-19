@@ -5,6 +5,7 @@ import std.array;
 import std.process;
 import core.stdc.stdlib;
 import commandManager;
+import aliasManager;
 
 void Commands_Help(string[] args) {
 	CommandManager cmds = CommandManagerInstance();
@@ -57,4 +58,8 @@ void Commands_Cd(string[] args) {
 	catch (FileException e) {
 		writefln("Failed to change directory: %s", e.msg);
 	}
+}
+
+void Commands_Alias(string[] args) {
+	AliasManager.Instance().aliases[args[1]] = args[2];
 }
