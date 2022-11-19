@@ -7,6 +7,7 @@ enum Lexer_TokenType {
 	Parameter,
 	EnvVariable,
 	Redirect,
+	Async,
 	End
 }
 
@@ -60,7 +61,22 @@ Lexer_Token[] Lexer_Lex(string input) {
 				inString = !inString;
 				break;
 			}
+			case '&': {
+				if (inString) {
+					reading ~= input[i];
+				}
+				else {
+					ret ~= Lexer_Token(
+						Lexer_TokenType.Async, ""
+					);
+				}
+				break;
+			}
 			case '>': {
+				if (inString) {
+					reading ~= input[i];
+					break;
+				}
 				ret ~= Lexer_Token(
 					Lexer_TokenType.Redirect,
 					reading
@@ -170,6 +186,9 @@ string Lexer_TokenTypeToString(Lexer_TokenType type) {
 		}
 		case Lexer_TokenType.Redirect: {
 			return "redirect";
+		}
+		case Lexer_TokenType.Async: {
+			return "async";
 		}
 		case Lexer_TokenType.End: {
 			return "end";

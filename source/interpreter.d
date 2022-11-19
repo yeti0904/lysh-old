@@ -18,7 +18,8 @@ void Interpret(Lexer_Token[] tokens) {
 				string arg;
 				while (
 					(tokens[i].type != Lexer_TokenType.End) &&
-					(tokens[i].type != Lexer_TokenType.Redirect)
+					(tokens[i].type != Lexer_TokenType.Redirect) &&
+					(tokens[i].type != Lexer_TokenType.Async)
 				) {
 					switch (tokens[i].type) {
 						case Lexer_TokenType.Parameter: {
@@ -44,6 +45,7 @@ void Interpret(Lexer_Token[] tokens) {
 				}
 
 				bool redirect = false;
+				bool dontWait = false;
 				File redirectTo;
 				if (tokens[i].type == Lexer_TokenType.Redirect) {
 					redirect = true;
@@ -59,6 +61,9 @@ void Interpret(Lexer_Token[] tokens) {
 						writefln("ErrnoException: %s", e.msg);
 						return;
 					}
+				}
+				else if (tokens[i].type == Lexer_TokenType.Async) {
+					dontWait = true;
 				}
 
 				if (arg != "") {
@@ -92,12 +97,18 @@ void Interpret(Lexer_Token[] tokens) {
 						return;
 					}
 
-					try {
-						wait(child);
+					if (dontWait) {
+						writefln("[%d]", child.processID);
 					}
-					catch (ProcessException e) {
-						writefln("ProcessException: %s", e.msg);
-						return;
+
+					if (!dontWait) {
+						try {
+							wait(child);
+						}
+						catch (ProcessException e) {
+							writefln("ProcessException: %s", e.msg);
+							return;
+						}
 					}
 				}
 				break;
