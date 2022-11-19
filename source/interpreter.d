@@ -18,10 +18,13 @@ void Interpret(Lexer_Token[] tokens) {
 				CommandManager cmds = CommandManagerInstance();
 
 				if (aliases.AliasExists(tokens[i].contents)) {
+					auto aliasTokens = Lexer_Lex(aliases.aliases[token.contents]);
+					aliasTokens = aliasTokens.remove(aliasTokens.length - 1);
+				
 					tokens = tokens.remove(i);
 					tokens =
 						tokens[0 .. i] ~
-						Lexer_Lex(aliases.aliases[token.contents]) ~
+						aliasTokens ~
 						tokens[i .. $];
 					token = tokens[i];
 				}
